@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAT MASTER 1600</title>
+<style>
+:root{--navy:#102448;--blue:#2868d7;--pale:#edf3ff;--ink:#17243b;--muted:#687792;--line:#e1e8f2;--green:#168451}
+*{box-sizing:border-box}body{margin:0;background:#f4f7fc;color:var(--ink);font:16px/1.5 Inter,Arial,sans-serif}
+header{background:var(--navy);color:white;padding:17px max(5%,calc((100% - 1120px)/2));display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{font-weight:900;letter-spacing:.3px;font-size:22px}.brand span{color:#77b4ff}
+button,select{font:inherit}button{border:0;border-radius:10px;padding:11px 17px;cursor:pointer;font-weight:700}
+button:disabled{opacity:.45;cursor:not-allowed}.lang{background:#263e66;color:#fff}.primary{background:var(--blue);color:white}.secondary{background:#eaf0fa;color:#24436f}
+main{max-width:1120px;margin:28px auto;padding:0 18px}.hero{background:linear-gradient(120deg,#12274c,#2868d7);color:#fff;border-radius:20px;padding:30px;margin-bottom:20px}
+.hero h1{font-size:clamp(26px,4vw,38px);margin:0 0 8px}.hero p{color:#dbe8ff;margin:0;max-width:760px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:15px;padding:20px}.stat b{font-size:26px;color:var(--blue);display:block}.stat small,.muted{color:var(--muted)}
+.panel{margin:16px 0}.panel h2{margin:0 0 12px;font-size:21px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.variant-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:14px 0}.variant{background:#eef3fb;color:#24436f;border:1px solid #dfe7f3}.variant.active{background:var(--blue);color:#fff}
+.tag{display:inline-block;background:#edf3ff;color:#2859a3;border-radius:30px;padding:4px 10px;font-size:12px;font-weight:700}.hidden{display:none!important}
+.progress{height:9px;background:#e8edf5;border-radius:20px;overflow:hidden;margin:12px 0 20px}.progress div{height:100%;background:var(--blue);width:0;transition:width .2s}
+.qtop{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:14px}.question{font-size:21px;font-weight:700;margin:20px 0}.answers{display:grid;gap:10px}.answer{background:#fff;border:1px solid #dce4ef;text-align:left;color:var(--ink);padding:14px 16px;font-weight:500}.answer:hover{border-color:var(--blue);background:#f8faff}.answer.selected{border:2px solid var(--blue);background:var(--pale)}
+.controls{display:flex;justify-content:space-between;gap:10px;margin-top:22px}.result-score{font-size:48px;font-weight:900;color:var(--blue)}.review{border-top:1px solid var(--line);padding:13px 0}.good{color:var(--green)}.bad{color:#c43b4b}
+select{border:1px solid var(--line);border-radius:9px;padding:10px;background:#fff;color:var(--ink)}
+footer{text-align:center;color:var(--muted);padding:25px}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.variant-grid{grid-template-columns:repeat(4,1fr)}header{padding:15px 18px}.hero{padding:23px}.question{font-size:18px}}
+</style>
+</head>
+<body>
+<header><div class="brand">SAT <span>MASTER</span> 1600</div><button class="lang" id="langBtn">EN</button></header>
+<main>
+<section class="hero"><h1 id="heroTitle">SATga tayyorlanish — o‘z darajangdan boshla</h1><p id="heroText">Avval qisqa diagnostika topshir. Sayt boshlang‘ich darajangni aniqlaydi, keyin 20 ta variantdan birini 40 ta savol bilan ishlaysan. Savollar bosqichma-bosqich qiyinlashadi.</p></section>
+<div class="grid">
+ <div class="stat"><b>20</b><small id="stat1">To‘liq mock variant</small></div>
+ <div class="stat"><b>40</b><small id="stat2">Har variantdagi savol</small></div>
+ <div class="stat"><b>1600</b><small id="stat3">Taxminiy maksimal ball</small></div>
+</div>
+
+<section class="panel" id="welcome">
+<h2 id="welcomeHead">1. Avval darajangni aniqlaymiz</h2>
+<p class="muted" id="welcomeDesc">Diagnostika 10 ta savoldan iborat: 5 Math va 5 Reading & Writing. Bu natija rasmiy SAT bahosi emas.</p>
+<button class="primary" id="diagnosticBtn">Diagnostikani boshlash →</button>
+</section>
+
+<section class="panel hidden" id="variantPanel">
+<h2 id="variantHead">2. Mock variantni tanla</h2>
+<p class="muted" id="levelLine"></p>
+<div id="diagnosticSummary" class="panel hidden" style="background:#f7faff;margin:16px 0">
+ <h2 id="diagTitle">Kirish testi natijasi</h2>
+ <div class="result-score" id="diagScore">0 / 10</div>
+ <div class="grid">
+  <div class="stat"><b id="diagMath">0/5</b><small>Math</small></div>
+  <div class="stat"><b id="diagRW">0/5</b><small>Reading & Writing</small></div>
+  <div class="stat"><b id="diagPercent">0%</b><small id="diagAccuracy">Aniqlik</small></div>
+ </div>
+ <div class="panel" style="margin-top:14px;text-align:center;background:#fff">
+  <small id="diagSatLabel">Taxminiy SAT balli (1600 dan)</small>
+  <div class="result-score" id="diagSatScore">400 / 1600</div>
+  <div class="muted" id="diagSatBreakdown">Math: 200 • Reading & Writing: 200</div>
+  <small id="diagSatNote">Bu faqat 10 savollik diagnostika asosidagi taxminiy ko‘rsatkich, rasmiy SAT balli emas.</small>
+ </div>
+ <div id="diagReview"></div>
+</div>
+<div class="variant-grid" id="variantGrid"></div>
+<p class="muted" id="variantDesc">Har bir variantda 20 Math + 20 Reading & Writing savoli bor. Savollar har urinishda yangidan tuziladi.</p>
+<button class="primary" id="startMock">Tanlangan variantni boshlash →</button>
+</section>
+
+<section class="panel hidden" id="quizPanel">
+<div class="qtop"><span id="sectionLabel">Math</span><span id="qCounter">1 / 40</span><span id="difficultyLabel">Daraja 1/5</span></div>
+<div class="progress"><div id="progressBar"></div></div>
+<div class="question" id="questionText"></div>
+<div class="answers" id="answerList"></div>
+<div class="controls"><button class="secondary" id="prevBtn">← Orqaga</button><button class="primary" id="nextBtn">Keyingi →</button></div>
+</section>
+
+<section class="panel hidden" id="resultPanel">
+<h2 id="resultHead">Natijang</h2><div class="result-score" id="scoreText">— / 1600</div>
+<p id="levelResult"></p>
+<div class="grid">
+ <div class="stat"><b id="mathResult">0/20</b><small>Math</small></div>
+ <div class="stat"><b id="rwResult">0/20</b><small>Reading & Writing</small></div>
+ <div class="stat"><b id="accuracyResult">0%</b><small id="accuracyLabel">Umumiy aniqlik</small></div>
+</div>
+<p class="muted" id="scoreNote"></p>
+<h2 id="reviewHead">Xatolar tahlili</h2><div id="reviewList"></div>
+<br><button class="primary" id="backHome">Bosh sahifaga qaytish</button>
+</section>
+<section class="panel" id="historyPanel"><h2 id="historyHead">Natijalar tarixi</h2><div id="historyList" class="muted">Hali natija yo‘q.</div></section>
+</main>
+<footer>SAT MASTER 1600 · SAT practice project</footer>
+<script>
+const $=id=>document.getElementById(id);
+let lang='uz',level=1,variant=1,questions=[],answers={},pos=0,mode='diagnostic',diagnosticDone=false;
+const words={
+uz:{heroTitle:'SATga tayyorlanish — o‘z darajangdan boshla',heroText:'Avval qisqa diagnostika topshir. Sayt boshlang‘ich darajangni aniqlaydi, keyin 20 ta variantdan birini 40 ta savol bilan ishlaysan. Savollar bosqichma-bosqich qiyinlashadi.',welcomeHead:'1. Avval darajangni aniqlaymiz',welcomeDesc:'Diagnostika 10 ta savoldan iborat: 5 Math va 5 Reading & Writing. Bu natija rasmiy SAT bahosi emas.',diagnosticBtn:'Diagnostikani boshlash →',variantHead:'2. Mock variantni tanla',variantDesc:'Har bir variantda 20 Math + 20 Reading & Writing savoli bor. Savollar har urinishda yangidan tuziladi.',startMock:'Tanlangan variantni boshlash →',next:'Keyingi →',finish:'Natijani ko‘rish',prev:'← Orqaga',math:'Matematika',rw:'Reading & Writing',level:'Aniqlangan daraja',beginner:'Boshlang‘ich',intermediate:'O‘rta',advanced:'Yuqori',expert:'Juda yuqori',question:'Savol',correct:'To‘g‘ri',wrong:'Noto‘g‘ri',your:'Sening javobing',right:'To‘g‘ri javob',why:'Izoh',result:'Natijang',accuracy:'Umumiy aniqlik',note:'Bu 1600 ballik ko‘rsatkich mashq uchun taxminiy hisob. Rasmiy SAT balli emas. Haqiqiy SAT balli adaptiv modullar, savol qiyinligi va College Board ekvayringiga bog‘liq.',home:'Bosh sahifaga qaytish',history:'Natijalar tarixi',none:'Hali natija yo‘q.',variant:'Variant',difficulty:'Qiyinlik',pick:'Tanlangan variant',stat1:'To‘liq mock variant',stat2:'Har variantdagi savol',stat3:'Taxminiy maksimal ball',levelText:'Sening boshlang‘ich darajang',diagnosticResult:'Diagnostika yakunlandi. Endi mos darajangdagi variantni tanla.',diagAccuracy:'Aniqlik',noAnswer:'Avval javobni tanla.',easy:'Oson',medium:'O‘rta',hard:'Qiyin',veryhard:'Juda qiyin'},
+en:{heroTitle:'Prepare for the SAT — start at your level',heroText:'Take a short placement test first. The site estimates your starting level, then you can choose one of 20 mock variants with 40 questions. Questions become progressively harder.',welcomeHead:'1. Let’s estimate your level',welcomeDesc:'The placement test has 10 questions: 5 Math and 5 Reading & Writing. This is not an official SAT score.',diagnosticBtn:'Start placement test →',variantHead:'2. Choose a mock variant',variantDesc:'Each variant has 20 Math + 20 Reading & Writing questions. New questions are generated for each attempt.',startMock:'Start selected variant →',next:'Next →',finish:'See results',prev:'← Previous',math:'Math',rw:'Reading & Writing',level:'Estimated level',beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced',expert:'Very advanced',question:'Question',correct:'Correct',wrong:'Incorrect',your:'Your answer',right:'Correct answer',why:'Explanation',result:'Your result',accuracy:'Overall accuracy',note:'This 1600-point indicator is an informal practice estimate, not an official SAT score. Actual SAT scoring depends on adaptive modules, question difficulty, and College Board equating.',home:'Return home',history:'Score history',none:'No results yet.',variant:'Variant',difficulty:'Difficulty',pick:'Selected variant',stat1:'Full mock variants',stat2:'Questions per variant',stat3:'Estimated maximum score',levelText:'Your starting level',diagnosticResult:'Placement complete. Now choose a mock at your estimated level.',diagAccuracy:'Accuracy',noAnswer:'Please select an answer first.',easy:'Easy',medium:'Medium',hard:'Hard',veryhard:'Very hard'}
+};
+function tr(k){return words[lang][k]||k}
+function updateLang(){ $('langBtn').textContent=lang==='uz'?'EN':'UZ';['heroTitle','heroText','welcomeHead','welcomeDesc','diagnosticBtn','variantHead','variantDesc','startMock','historyHead'].forEach(id=>$(id).textContent=tr(id));$('stat1').textContent=tr('stat1');$('stat2').textContent=tr('stat2');$('stat3').textContent=tr('stat3');$('prevBtn').textContent=tr('prev');$('nextBtn').textContent=tr('next');renderHistory();if(!$('quizPanel').classList.contains('hidden'))renderQuestion();}
+$('langBtn').onclick=()=>{lang=lang==='uz'?'en':'uz';updateLang()};
+function rnd(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function makeQ(type,d){
+ const isU=lang==='uz';
+ let q,a,c,exp;
+ const pick=(question,opts,correct,explanation)=>({type,q:question,a:opts,c:correct,exp:explanation,d});
+ if(type==='math'){
+  let x,y,n;
+  const kind=rnd(0, d<3?4:6);
+  if(kind===0){x=rnd(2,12+d*3);let b=rnd(2,15+d*4);let val=3*x+b;q=isU?`3x + ${b} = ${val} bo‘lsa, x ni toping.`:`If 3x + ${b} = ${val}, what is x?`;c=x;exp=`3x = ${val-b}; x = ${x}.`;}
+  else if(kind===1){x=rnd(3,15+d*4);let p=rnd(2,8);let v=x*p;q=isU?`${p}x = ${v}. x ni toping.`:`Solve ${p}x = ${v}.`;c=x;exp=`${v} ÷ ${p} = ${x}.`;}
+  else if(kind===2){x=rnd(3,12+d*2);y=rnd(2,10+d*2);let v=x*y;q=isU?`To‘g‘ri to‘rtburchak tomonlari ${x} va ${y}. Uning yuzini toping.`:`A rectangle has side lengths ${x} and ${y}. Find its area.`;c=v;exp=`Area = ${x} × ${y} = ${v}.`;}
+  else if(kind===3){x=rnd(2,10+d*2);let p=rnd(2,5);let v=x*p;q=isU?`${v} ning ${100/p}% ini toping.`:`Find ${100/p}% of ${v}.`;c=x;exp=`${v} ÷ ${p} = ${x}.`;}
+  else if(kind===4){x=rnd(3,12+d*3);let y=rnd(2,10+d*2);let v=x*x+y;q=isU?`f(x) = x² + ${y}. f(${x}) ni toping.`:`If f(x) = x² + ${y}, find f(${x}).`;c=v;exp=`${x}² + ${y} = ${v}.`;}
+  else if(kind===5){x=rnd(3,10+d*2);let y=rnd(2,8+d);let v=x+y;q=isU?`Ketma-ket ikki butun son yig‘indisi ${2*x+1}. Kichik sonni toping.`:`Two consecutive integers have a sum of ${2*x+1}. Find the smaller integer.`;c=x;exp=`n + (n+1) = ${2*x+1}; n = ${x}.`;}
+  else{x=rnd(3,12+d*2);let y=rnd(2,8+d);let v=x*x-y;q=isU?`x² − ${y} = ${v}. Musbat x ni toping.`:`If x² − ${y} = ${v} and x is positive, find x.`;c=x;exp=`x² = ${v+y} = ${x}².`;}
+  let opts=new Set([c]);while(opts.size<4){let z=c+rnd(-Math.max(3,d*3),Math.max(3,d*3));if(z!==c)opts.add(z)}let arr=shuffle([...opts]);return pick(q,arr.map(String),arr.indexOf(c),exp);
+ }else{
+  const kind=rnd(0,5);
+  if(kind===0){let subj=rnd(0,1);q=isU?'To‘g‘ri grammatik gapni tanlang.':'Choose the grammatically correct sentence.';let opts=isU?['She go to school.','She goes to school.','She going to school.','She gone to school.']:['She go to school.','She goes to school.','She going to school.','She gone to school.'];return pick(q,opts,1,"Third-person singular present simple uses 'goes'.");}
+  if(kind===1){q=isU?'“Reluctant” so‘zining eng yaqin ma’nosini tanlang.':'Choose the closest meaning of “reluctant”.';let opts=['Unwilling','Excited','Certain','Careless'];return pick(q,opts,0,"Reluctant means unwilling or hesitant.");}
+  if(kind===2){q=isU?'Gapni to‘ldiring: “The evidence was limited. ____, the researchers avoided a firm conclusion.”':'Complete the sentence: “The evidence was limited. ____, the researchers avoided a firm conclusion.”';let opts=['Therefore','Nevertheless','Similarly','For example'];return pick(q,opts,0,"Therefore signals a logical result.");}
+  if(kind===3){q=isU?'“Mitigate” so‘zining ma’nosini tanlang.':'Choose the closest meaning of “mitigate”.';let opts=isU?['Kuchaytirmoq','Kamaytirmoq','Taqqoslamoq','E’lon qilmoq']:['Intensify','Reduce','Compare','Announce'];return pick(q,opts,1,"Mitigate means to make something less severe or reduce it.");}
+  if(kind===4){q=isU?'Matn: “The town added protected bike lanes. Over six months, bicycle commuting rose by 18%.” Qaysi xulosa qo‘llab-quvvatlanadi?':'Text: “The town added protected bike lanes. Over six months, bicycle commuting rose by 18%.” Which conclusion is supported?';let opts=isU?['Velosipedda qatnov ko‘paygan.','Avtomobillar butunlay yo‘qolgan.','Barcha odamlar velosiped sotib olgan.','Yo‘laklar yopilgan.']:['Bicycle commuting increased.','Cars disappeared completely.','Everyone bought a bicycle.','The lanes were closed.'];return pick(q,opts,0,"The passage directly reports an 18% increase in bicycle commuting.");}
+  q=isU?'To‘g‘ri fe’l shaklini tanlang: “Neither of the explanations ____ convincing.”':'Choose the correct verb: “Neither of the explanations ____ convincing.”';return pick(q,['are','is','were','be'],1,"'Neither' is singular in this sentence, so use 'is'.");
+ }
+}
+function buildSet(count,base){let arr=[];for(let i=0;i<count;i++){let d=Math.min(5,Math.max(1,base+Math.floor(i/8)));arr.push(makeQ(i%2===0?'math':'rw',d));}return arr;}
+function startDiagnostic(){mode='diagnostic';level=1;questions=buildSet(10,1);answers={};pos=0;showQuiz();}
+function showQuiz(){['welcome','variantPanel','historyPanel','resultPanel'].forEach(id=>$(id).classList.add('hidden'));$('quizPanel').classList.remove('hidden');renderQuestion();}
+function renderQuestion(){let q=questions[pos];$('sectionLabel').textContent=q.type==='math'?tr('math'):tr('rw');$('qCounter').textContent=`${pos+1} / ${questions.length}`;$('difficultyLabel').textContent=`${tr('difficulty')} ${q.d}/5`;$('progressBar').style.width=((pos+1)/questions.length*100)+'%';$('questionText').textContent=q.q;$('answerList').innerHTML='';q.a.forEach((v,i)=>{let b=document.createElement('button');b.className='answer'+(answers[pos]===i?' selected':'');b.textContent='ABCD'[i]+'. '+v;b.onclick=()=>{answers[pos]=i;renderQuestion()};$('answerList').appendChild(b)});$('prevBtn').disabled=pos===0;$('nextBtn').textContent=pos===questions.length-1?tr('finish'):tr('next');}
+$('diagnosticBtn').onclick=startDiagnostic;$('prevBtn').onclick=()=>{if(pos>0){pos--;renderQuestion()}};$('nextBtn').onclick=()=>{if(answers[pos]===undefined){alert(tr('noAnswer'));return}if(pos<questions.length-1){pos++;renderQuestion()}else if(mode==='diagnostic')finishDiagnostic();else finishMock()};
+function finishDiagnostic(){
+ let correct=questions.filter((q,i)=>answers[i]===q.c).length;
+ let mathItems=questions.map((q,i)=>({q,i})).filter(x=>x.q.type==='math');
+ let rwItems=questions.map((q,i)=>({q,i})).filter(x=>x.q.type==='rw');
+ let mc=mathItems.filter(x=>answers[x.i]===x.q.c).length;
+ let rc=rwItems.filter(x=>answers[x.i]===x.q.c).length;
+ level=correct<=3?1:correct<=6?2:correct<=8?3:4;diagnosticDone=true;
+ $('quizPanel').classList.add('hidden');$('variantPanel').classList.remove('hidden');$('historyPanel').classList.remove('hidden');
+ let name=level===1?tr('beginner'):level===2?tr('intermediate'):level===3?tr('advanced'):tr('expert');
+ $('levelLine').textContent=`${tr('level')}: ${name} (${correct}/10). ${tr('diagnosticResult')}`;
+ $('diagnosticSummary').classList.remove('hidden');
+ $('diagTitle').textContent=lang==='uz'?'Kirish testi natijasi':'Placement test results';
+ $('diagScore').textContent=correct+' / 10';
+ $('diagMath').textContent=mc+'/5';$('diagRW').textContent=rc+'/5';
+ $('diagPercent').textContent=Math.round(correct/10*100)+'%';
+ $('diagAccuracy').textContent=tr('accuracy');
+ // Very rough practice estimate: each section is scaled from 200 to 800.
+ let mathSat=Math.round(200+600*(mc/5));
+ let rwSat=Math.round(200+600*(rc/5));
+ $('diagSatScore').textContent=(mathSat+rwSat)+' / 1600';
+ $('diagSatBreakdown').textContent=`Math: ${mathSat} • Reading & Writing: ${rwSat}`;
+ $('diagSatLabel').textContent=lang==='uz'?'Taxminiy SAT balli (1600 dan)':'Estimated SAT score (out of 1600)';
+ $('diagSatNote').textContent=lang==='uz'?'Bu faqat 10 savollik diagnostika asosidagi taxminiy ko‘rsatkich, rasmiy SAT balli emas.':'This is only a rough estimate from a 10-question placement test, not an official SAT score.';
+ let detail='';
+ questions.forEach((q,i)=>{
+  let ok=answers[i]===q.c;
+  detail+=`<div class="review"><b>${i+1}. ${q.q}</b><br><span class="${ok?'good':'bad'}">${ok?'✓ '+tr('correct'):'✗ '+tr('wrong')}: ${q.a[answers[i]]}</span><br>${tr('right')}: <b>${q.a[q.c]}</b><br><small>${tr('why')}: ${q.exp}</small></div>`;
+ });
+ $('diagReview').innerHTML=detail;
+ renderVariants();
+}
+function renderVariants(){$('variantGrid').innerHTML='';for(let i=1;i<=20;i++){let b=document.createElement('button');b.className='variant'+(i===variant?' active':'');b.textContent=String(i).padStart(2,'0');b.onclick=()=>{variant=i;renderVariants()};$('variantGrid').appendChild(b)}}
+$('startMock').onclick=()=>{mode='mock';answers={};pos=0;let base=level;questions=[];for(let i=0;i<20;i++)questions.push(makeQ('math',Math.min(5,base+Math.floor(i/5))));for(let i=0;i<20;i++)questions.push(makeQ('rw',Math.min(5,base+Math.floor(i/5))));questions=shuffleBySection(questions);showQuiz()};
+function shuffleBySection(arr){return [...arr.slice(0,20),...arr.slice(20)];}
+function finishMock(){let m=questions.map((q,i)=>({q,i})).filter(x=>x.q.type==='math');let r=questions.map((q,i)=>({q,i})).filter(x=>x.q.type==='rw');let mc=m.filter(x=>answers[x.i]===x.q.c).length,rc=r.filter(x=>answers[x.i]===x.q.c).length;let total=mc+rc,pct=Math.round(total/40*100);let ms=Math.round(200+600*mc/20),rs=Math.round(200+600*rc/20),score=ms+rs;let estimatedLevel=pct<35?tr('beginner'):pct<60?tr('intermediate'):pct<82?tr('advanced'):tr('expert');$('quizPanel').classList.add('hidden');$('resultPanel').classList.remove('hidden');$('historyPanel').classList.remove('hidden');$('scoreText').textContent=score+' / 1600';$('mathResult').textContent=mc+'/20';$('rwResult').textContent=rc+'/20';$('accuracyResult').textContent=pct+'%';$('levelResult').textContent=`${tr('level')}: ${estimatedLevel} · ${tr('variant')} ${variant}`;$('scoreNote').textContent=tr('note');let review='';questions.forEach((q,i)=>{let ok=answers[i]===q.c;review+=`<div class="review"><b>${i+1}. ${q.q}</b><br><span class="${ok?'good':'bad'}">${ok?'✓ '+tr('correct'):'✗ '+tr('wrong')}: ${q.a[answers[i]]}</span><br>${tr('right')}: <b>${q.a[q.c]}</b><br><small>${tr('why')}: ${q.exp}</small></div>`});$('reviewList').innerHTML=review;let hist=JSON.parse(localStorage.getItem('satMasterHistory')||'[]');hist.unshift({score,pct,variant,date:new Date().toLocaleDateString()});localStorage.setItem('satMasterHistory',JSON.stringify(hist.slice(0,20)));renderHistory();}
+$('backHome').onclick=()=>{['resultPanel','quizPanel','variantPanel'].forEach(id=>$(id).classList.add('hidden'));$('welcome').classList.remove('hidden');$('historyPanel').classList.remove('hidden')};
+function renderHistory(){let h=JSON.parse(localStorage.getItem('satMasterHistory')||'[]');$('historyList').innerHTML=h.length?h.map((x,i)=>`<div class="review">#${i+1} · ${x.date} · ${tr('variant')} ${x.variant} — <b>${x.score}/1600</b> (${x.pct}%)</div>`).join(''):tr('none')}
+updateLang();renderHistory();
+</script>
+</body></html>
